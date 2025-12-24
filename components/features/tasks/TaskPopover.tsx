@@ -1,24 +1,45 @@
 import { usePopoverStore } from '@/lib/usePopoverStore';
 import { useTaskStore } from '@/lib/useTaskStore';
 import { Priority, Task } from '@/types';
-import React, { useState } from 'react';
-import { BiAlignLeft, BiCalendar, BiCheck, BiTag, BiX, BiUserPlus } from 'react-icons/bi';
+import React, { useState, useEffect } from 'react';
+import { BiAlignLeft, BiCalendar, BiCheck, BiTag, BiX, BiUserPlus, BiErrorCircle } from 'react-icons/bi';
 import { FaLayerGroup } from 'react-icons/fa';
 import { GiSprint } from 'react-icons/gi';
 
 const TaskPopover = () => {
   const { isOpen, taskData, setTaskData, closePopover } = usePopoverStore();
-  const { addTask, updateTask } = useTaskStore();
+  const { addTask, updateTask, removeTask, tasks } = useTaskStore();
 
   const [newName, setNewName] = useState('');
   const [newAvatar, setNewAvatar] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    setErrorMessage('');
+  }, [isOpen, taskData.title]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
 
-    if (!taskData.title) return;
+    const titleToSave = (taskData.title || '').trim();
+
+    if (!titleToSave) {
+      setErrorMessage('Task title is required.');
+      return;
+    }
+
+    const isDuplicate = tasks.some(t => 
+      t.title.toLowerCase().trim() === titleToSave.toLowerCase() && 
+      t.id !== taskData.id
+    );
+
+    if (isDuplicate) {
+      setErrorMessage('You already have a task with this title.');
+      return;
+    }
 
     if (taskData.id) {
       // Logic for Update
@@ -27,7 +48,7 @@ const TaskPopover = () => {
       // Logic for Create New
       const newTask: Task = {
         id: Date.now().toString(),
-        title: taskData.title || '',
+        title: titleToSave,
         description: taskData.description || '',
         category: taskData.category || 'Work',
         dueDate: taskData.dueDate || 'No date',
@@ -81,8 +102,15 @@ const TaskPopover = () => {
               placeholder="Task Title"
               value={taskData.title || ''}
               onChange={(e) => setTaskData({ title: e.target.value })}
-              className="w-full text-lg font-medium text-slate-900 py-2 px-4 bg-slate-50/50 rounded-2xl border border-transparent focus:bg-white focus:border-violet-200 focus:ring-4 focus:ring-violet-500/5 outline-none transition-all"
+              className={`w-full text-lg font-medium text-slate-900 py-2 px-4 bg-slate-50/50 rounded-2xl border ${errorMessage ? 'border-rose-400 focus:ring-rose-500/10' : 'border-transparent focus:border-violet-200 focus:ring-violet-500/5'} focus:bg-white focus:ring-4 outline-none transition-all`}
             />
+            {/* 4. Display Error Message */}
+            {errorMessage && (
+              <div className="flex items-center gap-2 text-rose-500 text-xs font-bold px-2 animate-pulse">
+                <BiErrorCircle size={14} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -165,11 +193,37 @@ const TaskPopover = () => {
             </div>
           </div>
 
-          <div className="flex gap-4 pt-2">
-            <button type="button" onClick={closePopover} className="flex-1 py-4 text-slate-500 font-bold rounded-2xl hover:bg-slate-100 transition-colors">Cancel</button>
-            <button type="submit" className="flex-1 flex items-center justify-center gap-2 py-4 bg-violet-600 text-white font-black rounded-2xl shadow-xl shadow-violet-200 hover:bg-violet-700 transition-all">
-              {taskData.id ? 'Update Task' : 'Create Task'} <BiCheck size={20} />
-            </button>
+          <div className="flex gap-4 justify-between items-center pt-2">
+            {taskData.id && (
+                <button
+                type="button"
+                onClick={() => {
+                    if(confirm("Delete this task?")) {
+                        removeTask(taskData.id!);
+                        closePopover();
+                    }
+                }}
+                className="px-4 p-2 font-bold rounded-2xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors">
+                Remove
+                </button>
+            )}
+            
+            <div className={`flex gap-4 justify-end items-center pt-2 ${!taskData.id ? 'w-full' : ''}`}>
+              <button
+                type="button"
+                onClick={closePopover}
+                className="px-4 p-2 text-slate-500 font-bold rounded-2xl bg-slate-200 hover:bg-slate-100 transition-colors">
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-2 px-4 p-2 bg-violet-600 text-white font-black rounded-2xl shadow-xl shadow-violet-200 hover:bg-violet-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!!errorMessage}
+              >
+                {taskData.id ? 'Update Task' : 'Create Task'}
+              </button>
+            </div>
           </div>
         </form>
       </div>

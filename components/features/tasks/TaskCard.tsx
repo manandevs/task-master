@@ -1,10 +1,9 @@
-// components/features/tasks/TaskCard.tsx
 import React from 'react';
 import { Task, Priority } from '../../../types';
 import { Card } from '../../ui';
 import { usePopoverStore } from '@/lib/usePopoverStore';
-import { useTaskStore } from '@/lib/useTaskStore'; // Import the store
-import { BiTrash } from 'react-icons/bi'; // Import trash icon
+import { useTaskStore } from '@/lib/useTaskStore';
+import { BiTrash } from 'react-icons/bi';
 
 interface TaskCardProps {
   task: Task;
@@ -13,8 +12,7 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle }) => {
   const { setTaskData, togglePopover } = usePopoverStore();
-  const { removeTask } = useTaskStore(); // Pull the remove action
-  
+
   const getPriorityColor = (p: Priority) => {
     switch (p) {
       case Priority.HIGH: return 'bg-rose-500';
@@ -30,14 +28,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle }) => {
         setTaskData({ ...task });
         togglePopover('edit-task', { ...task });
       }}
-      className="hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(124,58,237,0.12)]"
+      className="group hover:cursor-pointer hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(124,58,237,0.12)]"
     >
       <div className={`absolute left-0 top-6 bottom-6 w-1.5 rounded-r-full ${getPriorityColor(task.priority)}`}></div>
 
       <div className="flex flex-col h-full gap-4">
         <div className="flex justify-between items-start pl-2">
           <div className="space-y-1">
-            <h4 className={`text-lg font-bold text-slate-800 transition-all duration-300 ${task.completed ? 'line-through opacity-40' : ''}`}>
+            <h4 className={`group-hover:underline underline-offset-2 text-lg font-bold text-slate-800 transition-all duration-300 ${task.completed ? 'line-through opacity-40' : ''}`}>
               {task.title}
             </h4>
             <div className="flex items-center gap-1.5 text-slate-400">
@@ -46,32 +44,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onToggle }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* REMOVE BUTTON */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Stop from opening the Edit Popover
-                if(confirm('Delete this task?')) removeTask(task.id);
-              }}
-              className="p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
-              title="Delete Task"
-            >
-              <BiTrash size={18} />
-            </button>
-
-            {/* TOGGLE COMPLETE BUTTON */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-              }}
-              className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${task.completed ? 'bg-violet-600 border-violet-600' : 'border-slate-200 hover:border-violet-400'}`}
-            >
-              {task.completed && (
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-              )}
-            </button>
-          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+            className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${task.completed ? 'bg-violet-600 border-violet-600' : 'border-slate-200 hover:border-violet-400'}`}
+          >
+            {task.completed && (
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+            )}
+          </button>
         </div>
 
         <div className="mt-auto flex items-center justify-between pl-2">

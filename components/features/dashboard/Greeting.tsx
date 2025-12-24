@@ -10,8 +10,12 @@ interface GreetingProps {
 
 export const Greeting: React.FC<GreetingProps> = ({ userName, taskCount, progress }) => {
   const [title, setTitle] = React.useState('')
-  const { togglePopover } = usePopoverStore();  
+  const { togglePopover } = usePopoverStore();
 
+  const handleQuickAdd = () => {
+    togglePopover('new-task', { title: title });
+    setTitle("");
+  }
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-8 bg-white/40 border border-gray-200/60 rounded-[2.5rem] relative overflow-hidden p-4 md:p-6">
       <div className="absolute -top-12 -left-12 w-64 h-64 bg-violet-200/30 rounded-full blur-3xl -z-10"></div>
@@ -30,6 +34,7 @@ export const Greeting: React.FC<GreetingProps> = ({ userName, taskCount, progres
         <div className="relative max-w-md w-full">
           <input
             type="text"
+            value={title}
             onChange={(e) => { setTitle(e.target.value) }}
             placeholder="Quick add a new task..."
             className="w-full bg-white/80 backdrop-blur-md border border-white/80 rounded-2xl px-6 py-4 shadow-sm focus:shadow-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-300 outline-none transition-all duration-300 text-slate-700"
