@@ -3,15 +3,18 @@ import { MainLayout } from '../components/layout/MainLayout';
 import { Greeting } from '../components/features/dashboard/Greeting';
 import { TaskCard } from '../components/features/tasks/TaskCard';
 import { StickyNotes } from '../components/features/dashboard/StickyNotes';
-import { MOCK_MEMOS, AVATAR_OPTIONS } from '../lib/data'; // Consolidated import
+import { MOCK_MEMOS, AVATAR_OPTIONS } from '../lib/data';
 import { useTaskStore } from '../lib/useTaskStore';
 import { GiCircleSparks } from 'react-icons/gi';
+import { BiGridAlt, BiListUl } from 'react-icons/bi'; // Import icons for the toggle
 
 const App: React.FC = () => {
   const { tasks, toggleTask, fetchTasks, currentUser, setCurrentUser } = useTaskStore();
   const [nameInput, setNameInput] = useState('');
   
-  // Use Imported Data
+  // State for View Mode (Grid vs List)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
   const [selectedAvatar, setSelectedAvatar] = useState(AVATAR_OPTIONS[0].avatar);
 
   // Fetch tasks whenever currentUser changes
@@ -101,11 +104,32 @@ const App: React.FC = () => {
         </section>
         
         <section className="space-y-6">
-          <div className="flex items-center justify-between px-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-2 gap-4">
             <h2 className="text-2xl font-bold tracking-tight text-slate-800">Your Tasks</h2>
+            
             <div className="flex items-center gap-4">
-              <div className="text-sm font-medium text-slate-400">
-                {tasks.length} total tasks
+              {/* VIEW TOGGLE BUTTONS */}
+              <div className="bg-slate-100 p-1 rounded-lg flex items-center">
+                <button 
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'grid' ? 'bg-white text-violet-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  title="Grid View"
+                >
+                  <BiGridAlt size={20} />
+                </button>
+                <button 
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-md transition-all duration-200 ${viewMode === 'list' ? 'bg-white text-violet-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  title="List View"
+                >
+                  <BiListUl size={20} />
+                </button>
+              </div>
+
+              <div className="h-6 w-[1px] bg-slate-200 mx-2 hidden sm:block"></div>
+
+              <div className="text-sm font-medium text-slate-400 hidden sm:block">
+                {tasks.length} total
               </div>
               <button 
                 onClick={() => { 
@@ -126,7 +150,14 @@ const App: React.FC = () => {
               <p className="text-slate-400 text-sm mt-1">Use the quick add above!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            // DYNAMIC GRID CLASS BASED ON VIEWMODE
+            <div className={`
+              grid gap-6 transition-all duration-300
+              ${viewMode === 'grid' 
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' // Grid: Multiple cols
+                : 'grid-cols-1' // List: Single col (Row view)
+              }
+            `}>
               {tasks.map(task => (
                 <TaskCard key={task.id} task={task} onToggle={() => toggleTask(task.id)} />
               ))}
