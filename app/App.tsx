@@ -42,13 +42,13 @@ const App: React.FC = () => {
         <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-violet-200 text-white text-4xl animate-bounce">
           <GiCircleSparks />
         </div>
-        <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl p-8 space-y-6 border border-slate-100">
+        <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl p-8 space-y-4 border border-slate-100">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-black text-slate-800">Welcome Back</h1>
             <p className="text-slate-400 font-medium">Enter your unique name to access your workspace</p>
           </div>
           
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-4">
             <input
               autoFocus
               type="text"
@@ -61,7 +61,7 @@ const App: React.FC = () => {
             {/* Avatar Selection Grid */}
             <div className="space-y-3">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Choose your Avatar</p>
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="flex flex-wrap justify-center gap-3 py-5 h-30 overflow-scroll">
                 {AVATAR_OPTIONS.map((item) => (
                   <button
                     type="button"
