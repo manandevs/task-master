@@ -64,18 +64,24 @@ Follow these steps to set up TaskMaster locally:
 ```bash
 git clone https://github.com/your-username/task-master.git
 cd task-master
+```
+
 2. Install dependencies
-code
-Bash
+
+```
 npm install
+```
+
 3. Launch Development Server
-code
-Bash
+```
 npm run dev
+```
+
 The application will live at http://localhost:3000
+
 📂 Project Structure
-code
-Text
+
+```
 task-master/
 ├── app/               # Main entry point & global CSS
 ├── components/        # UI Architecture
@@ -85,20 +91,35 @@ task-master/
 ├── lib/               # State Stores (Zustand) & Data Utilities
 ├── types.ts           # Global TS Interfaces
 └── vite.config.ts     # Build System Configuration
+```
+
+<br />
 🎨 Design Philosophy
+
+<br />
 TaskMaster is built on the Aero-Glass aesthetic:
 backdrop-blur-xl: Creating depth and focus.
 bg-white/40: Ensuring content is legible but feels light.
 shadow-violet-500/10: Using color-aware shadows to elevate active elements.
+
+<br />
 🤝 Contributing
+
+<br />
 Contributions drive the open-source community!
 Fork the Project.
 Branch out (git checkout -b feature/AmazingFeature).
 Commit changes (git commit -m 'Add AmazingFeature').
 Push to branch (git push origin feature/AmazingFeature).
 Open a Pull Request.
+
+<br />
 📄 License
+
+<br />
 Distributed under the MIT License. See LICENSE for more information.
+
+<br />
 <div align="center">
 Developed with ❤️ by [Your Name]
 Transforming workflows, one task at a time.
